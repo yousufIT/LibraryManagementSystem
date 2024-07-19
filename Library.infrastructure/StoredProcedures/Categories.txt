@@ -1,0 +1,56 @@
+﻿-- الإجراء المخزن للحصول على الفئات الرئيسية
+CREATE PROCEDURE GetMainCategories
+AS
+BEGIN
+    SELECT * FROM Categories WHERE ParentCategoryID IS NULL
+END
+GO
+
+-- الإجراء المخزن للحصول على الفئات الفرعية بناءً على معرف الفئة الرئيسية
+CREATE PROCEDURE GetSubCategories
+    @MainCategoryID INT
+AS
+BEGIN
+    SELECT * FROM Categories WHERE ParentCategoryID = @MainCategoryID
+END
+GO
+
+-- الإجراء المخزن للحصول على الفئة بواسطة المعرف
+CREATE PROCEDURE GetCategoryById
+    @ID INT
+AS
+BEGIN
+    SELECT * FROM Categories WHERE CategoryID = @ID
+END
+GO
+
+-- الإجراء المخزن لإنشاء فئة جديدة
+CREATE PROCEDURE CreateCategory
+    @Name NVARCHAR(100),
+    @ParentCategoryID INT = NULL
+AS
+BEGIN
+    INSERT INTO Categories (Name, ParentCategoryID) VALUES (@Name, @ParentCategoryID)
+    SELECT * FROM Categories WHERE CategoryID = SCOPE_IDENTITY()
+END
+GO
+
+-- الإجراء المخزن لتحديث الفئة
+CREATE PROCEDURE UpdateCategory
+    @ID INT,
+    @Name NVARCHAR(100),
+    @ParentCategoryID INT = NULL
+AS
+BEGIN
+    UPDATE Categories SET Name = @Name, ParentCategoryID = @ParentCategoryID WHERE CategoryID = @ID
+END
+GO
+
+-- الإجراء المخزن لحذف الفئة
+CREATE PROCEDURE DeleteCategory
+    @ID INT
+AS
+BEGIN
+    DELETE FROM Categories WHERE CategoryID = @ID
+END
+GO

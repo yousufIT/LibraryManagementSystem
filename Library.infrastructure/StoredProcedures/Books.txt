@@ -1,0 +1,111 @@
+﻿-- الإجراء المخزن للحصول على جميع الكتب
+CREATE PROCEDURE GetAllBooks
+AS
+BEGIN
+    SELECT * FROM Books
+END
+GO
+
+-- الإجراء المخزن للحصول على كتاب بواسطة المعرف
+CREATE PROCEDURE GetBookById
+    @ID INT
+AS
+BEGIN
+    SELECT * FROM Books WHERE BookID = @ID
+END
+GO
+
+-- الإجراء المخزن لإنشاء كتاب جديد
+CREATE PROCEDURE CreateBook
+    @Title NVARCHAR(100),
+    @PublishedDate DATE,
+    @Description NVARCHAR(MAX),
+    @MainCategoryID INT,
+    @SubCategoryID INT,
+    @Publisher NVARCHAR(100),
+    @Pages INT,
+    @Language NVARCHAR(50),
+    @Price DECIMAL(18, 2),
+    @Edition NVARCHAR(50),
+    @Format NVARCHAR(50),
+    @Location NVARCHAR(100)
+AS
+BEGIN
+    INSERT INTO Books (Title, PublishedDate, Description, MainCategoryID, SubCategoryID, Publisher, Pages, Language, Price, Edition, Format, Location)
+    VALUES (@Title, @PublishedDate, @Description, @MainCategoryID, @SubCategoryID, @Publisher, @Pages, @Language, @Price, @Edition, @Format, @Location)
+    SELECT * FROM Books WHERE BookID = SCOPE_IDENTITY()
+END
+GO
+
+-- الإجراء المخزن لتحديث كتاب موجود
+CREATE PROCEDURE UpdateBook
+    @ID INT,
+    @Title NVARCHAR(100),
+    @PublishedDate DATE,
+    @Description NVARCHAR(MAX),
+    @MainCategoryID INT,
+    @SubCategoryID INT,
+    @Publisher NVARCHAR(100),
+    @Pages INT,
+    @Language NVARCHAR(50),
+    @Price DECIMAL(18, 2),
+    @Edition NVARCHAR(50),
+    @Format NVARCHAR(50),
+    @Location NVARCHAR(100)
+AS
+BEGIN
+    UPDATE Books
+    SET Title = @Title,
+        PublishedDate = @PublishedDate,
+        Description = @Description,
+        MainCategoryID = @MainCategoryID,
+        SubCategoryID = @SubCategoryID,
+        Publisher = @Publisher,
+        Pages = @Pages,
+        Language = @Language,
+        Price = @Price,
+        Edition = @Edition,
+        Format = @Format,
+        Location = @Location
+    WHERE BookID = @ID
+END
+GO
+
+-- الإجراء المخزن لحذف كتاب
+CREATE PROCEDURE DeleteBook
+    @ID INT
+AS
+BEGIN
+    DELETE FROM Books WHERE BookID = @ID
+END
+GO
+
+-- الإجراء المخزن للحصول على الكتب استنادًا إلى الفئة الرئيسية
+CREATE PROCEDURE GetBooksByMainCategory
+    @MainCategoryID INT
+AS
+BEGIN
+    SELECT * FROM Books WHERE MainCategoryID = @MainCategoryID
+END
+GO
+
+-- الإجراء المخزن للحصول على الكتب استنادًا إلى الفئة الفرعية
+CREATE PROCEDURE GetBooksBySubCategory
+    @SubCategoryID INT
+AS
+BEGIN
+    SELECT * FROM Books WHERE SubCategoryID = @SubCategoryID
+END
+GO
+
+-- الإجراء المخزن للحصول على الكتب التي كتبها مؤلف معين
+CREATE PROCEDURE GetBooksByAuthor
+    @AuthorID INT
+AS
+BEGIN
+    SELECT b.* 
+    FROM Books b
+    INNER JOIN BookAuthors ba ON b.BookID = ba.BookID
+    WHERE ba.AuthorID = @AuthorID
+END
+GO

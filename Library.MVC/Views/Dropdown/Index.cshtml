@@ -1,0 +1,48 @@
+﻿@using Library.Domain.Models
+@model IEnumerable<Category>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dropdown Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Select Category and Subcategory</h2>
+    <form>
+        <label for="category">Category:</label>
+        <select id="category" name="category">
+            <option value="">Select Category</option>
+            @foreach (var category in Model)
+            {
+                <option value="@category.CategoryID">@category.Name</option>
+            }
+        </select>
+
+        <label for="subcategory">Subcategory:</label>
+        <select id="subcategory" name="subcategory">
+            <option value="">Select Subcategory</option>
+        </select>
+    </form>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#category').change(function () {
+                var categoryId = $(this).val();
+                if (categoryId) {
+                    $.getJSON('/Dropdown/GetSubcategories?categoryId=' + categoryId, function (data) {
+                        var items = '<option value="">Select Subcategory</option>';
+                        $.each(data, function (i, subcategory) {
+                            items += '<option value="' + subcategory.SubcategoryID + '">' + subcategory.SubcategoryName + '</option>';
+                        });
+                        $('#subcategory').html(items);
+                    });
+                } else {
+                    $('#subcategory').html('<option value="">Select Subcategory</option>');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

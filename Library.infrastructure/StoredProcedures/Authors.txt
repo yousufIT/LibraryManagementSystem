@@ -1,0 +1,72 @@
+﻿-- الإجراء المخزن للحصول على جميع المؤلفين
+CREATE PROCEDURE GetAllAuthors
+AS
+BEGIN
+    SELECT * FROM Authors
+END
+GO
+
+-- الإجراء المخزن للحصول على مؤلف بواسطة المعرف
+CREATE PROCEDURE GetAuthorById
+    @ID INT
+AS
+BEGIN
+    SELECT * FROM Authors WHERE AuthorID = @ID
+END
+GO
+
+-- الإجراء المخزن لإنشاء مؤلف جديد
+CREATE PROCEDURE CreateAuthor
+    @Name NVARCHAR(100),
+    @Nationality NVARCHAR(50),
+    @DateOfBirth DATE
+AS
+BEGIN
+    INSERT INTO Authors (Name, Nationality, DateOfBirth) VALUES (@Name, @Nationality, @DateOfBirth)
+    SELECT * FROM Authors WHERE AuthorID = SCOPE_IDENTITY()
+END
+GO
+
+-- الإجراء المخزن لتحديث مؤلف موجود
+CREATE PROCEDURE UpdateAuthor
+    @ID INT,
+    @Name NVARCHAR(100),
+    @Nationality NVARCHAR(50),
+    @DateOfBirth DATE
+AS
+BEGIN
+    UPDATE Authors
+    SET Name = @Name, Nationality = @Nationality, DateOfBirth = @DateOfBirth
+    WHERE AuthorID = @ID
+END
+GO
+
+-- الإجراء المخزن لحذف مؤلف
+CREATE PROCEDURE DeleteAuthor
+    @ID INT
+AS
+BEGIN
+    DELETE FROM Authors WHERE AuthorID = @ID
+END
+GO
+
+-- الإجراء المخزن للحصول على المؤلفين بناءً على معرف الكتاب
+CREATE PROCEDURE GetAuthorsByBook
+    @BookID INT
+AS
+BEGIN
+    SELECT a.*
+    FROM Authors a
+    INNER JOIN BookAuthors ba ON a.AuthorID = ba.AuthorID
+    WHERE ba.BookID = @BookID
+END
+GO
+
+-- الإجراء المخزن للحصول على المؤلفين بناءً على الجنسية
+CREATE PROCEDURE GetAuthorsByNationality
+    @Nationality NVARCHAR(50)
+AS
+BEGIN
+    SELECT * FROM Authors WHERE Nationality = @Nationality
+END
+GO
