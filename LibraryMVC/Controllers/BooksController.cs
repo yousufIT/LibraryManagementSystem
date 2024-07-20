@@ -5,9 +5,9 @@ using Library.infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LibraryTest.Summaries;
+using LibraryMVC.Summaries;
 
-namespace LibraryTest.Controllers
+namespace LibraryMVC.Controllers
 {
     [Route("api/[controller]")]
     [ApiVersion("2.0")]
@@ -15,11 +15,17 @@ namespace LibraryTest.Controllers
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IAuthorRepository _authorRepository;
 
-        public BooksController(IBookRepository bookRepository, IMapper mapper)
+        public BooksController(IBookRepository bookRepository, 
+            IMapper mapper,ICategoryRepository categoryRepository,
+            IAuthorRepository authorRepository)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
+            _categoryRepository = categoryRepository;
+            _authorRepository = authorRepository;
         }
 
         // GET: api/books
@@ -51,15 +57,28 @@ namespace LibraryTest.Controllers
 
             if (bookSummary == null)
             {
-                return BadRequest("BookSummary is null.");
+                return NotFound("this book not found.");
             }
 
             // Map BookSummary to Book
             var book = _mapper.Map<Book>(bookSummary);
-
+            book.MainCategory = await _categoryRepository.GetByIdAsync(bookSummary.MainCategoryID);
+            book.SubCategory = await _categoryRepository.GetByIdAsync(bookSummary.SubCategoryID);
+            var author=await _authorRepository.GetByIdAsync(bookSummary.AuthorId.Value);
+            if(author == null) { return NotFound("this author doesn't exist"); }
             // Add the book to the repository
             await _bookRepository.AddAsync(book);
-
+            BookAuthor bookAuthor = new BookAuthor()
+            {
+                BookID = book.BookID,
+                Book = book,
+                AuthorID = author.AuthorID,
+                Author = author
+            };
+            book.MainCategory.Books.Add(book);
+            book.SubCategory.Books.Add(book);
+            book.BookAuthors.Add(bookAuthor);
+            await _bookRepository.UpdateAsync(book);
             // Map the book back to BookSummary for response
             bookSummary.BookID = book.BookID;
 

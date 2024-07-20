@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryTest", "LibraryTest\LibraryTest.csproj", "{9BA337F5-0E70-42C7-A101-07785FF33619}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Domain", "Library.Domain\Library.Domain.csproj", "{9605AA13-CCED-43A0-A364-2CB5AC911063}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.infrastructure", "Library.infrastructure\Library.infrastructure.csproj", "{D1346A93-E7D5-48EE-B7D7-BB7B33343723}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryMVC", "LibraryMVC\LibraryMVC.csproj", "{409421A4-ED37-4F1A-BD96-1B5D0256CE09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryMVC", "LibraryMVC\LibraryMVC.csproj", "{409421A4-ED37-4F1A-BD96-1B5D0256CE09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9BA337F5-0E70-42C7-A101-07785FF33619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9BA337F5-0E70-42C7-A101-07785FF33619}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9BA337F5-0E70-42C7-A101-07785FF33619}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9BA337F5-0E70-42C7-A101-07785FF33619}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9605AA13-CCED-43A0-A364-2CB5AC911063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9605AA13-CCED-43A0-A364-2CB5AC911063}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9605AA13-CCED-43A0-A364-2CB5AC911063}.Release|Any CPU.ActiveCfg = Release|Any CPU

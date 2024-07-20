@@ -5,9 +5,9 @@ using Library.infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LibraryTest.Summaries;
+using LibraryMVC.Summaries;
 
-namespace LibraryTest.Controllers
+namespace LibraryMVC.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -15,11 +15,13 @@ namespace LibraryTest.Controllers
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
+        private readonly IBookRepository _bookRepository;
 
-        public AuthorsController(IAuthorRepository authorRepository, IMapper mapper)
+        public AuthorsController(IAuthorRepository authorRepository, IMapper mapper,IBookRepository bookRepository)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _bookRepository = bookRepository;
         }
 
         // GET: api/authors
@@ -48,9 +50,20 @@ namespace LibraryTest.Controllers
         [HttpPost]
         public async Task<ActionResult<AuthorSummary>> Creat([FromBody] AuthorSummary authorSummary)
         {
-            if (authorSummary == null) { return BadRequest(); }
+            if (authorSummary == null) { return NotFound("this author not found"); }
             var author = _mapper.Map<Author>(authorSummary);
+            var book=await _bookRepository.GetByIdAsync(authorSummary.BookID.Value);
+            if (book == null) { return NotFound("this book not found"); }
             await _authorRepository.AddAsync(author);
+            BookAuthor bookAuthor = new BookAuthor()
+            {
+                BookID = book.BookID,
+                Book = book,
+                AuthorID = author.AuthorID,
+                Author = author
+            };
+            author.BookAuthors.Add(bookAuthor);
+            await _authorRepository.UpdateAsync(author);
             authorSummary.AuthorID = author.AuthorID;
             return Ok(authorSummary);
         }

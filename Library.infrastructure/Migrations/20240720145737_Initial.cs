@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Library.infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class library : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -66,17 +66,22 @@ namespace Library.infrastructure.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Edition = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Format = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Books", x => x.BookID);
                     table.ForeignKey(
+                        name: "FK_Books_Categories_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryID");
+                    table.ForeignKey(
                         name: "FK_Books_Categories_MainCategoryID",
                         column: x => x.MainCategoryID,
                         principalTable: "Categories",
-                        principalColumn: "CategoryID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "CategoryID");
                     table.ForeignKey(
                         name: "FK_Books_Categories_SubCategoryID",
                         column: x => x.SubCategoryID,
@@ -123,42 +128,38 @@ namespace Library.infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, "Fiction", null },
-                    { 2, "Non-Fiction", null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Books",
-                columns: new[] { "BookID", "Description", "Edition", "Format", "Language", "Location", "MainCategoryID", "Pages", "Price", "PublishedDate", "Publisher", "SubCategoryID", "Title" },
-                values: new object[] { 2, "A mystery novel.", "1st", "Paperback", "English", "Shelf B2", 1, 256, 12.99m, new DateTime(1934, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Collins Crime Club", null, "Murder on the Orient Express" });
-
-            migrationBuilder.InsertData(
-                table: "Categories",
-                columns: new[] { "CategoryID", "Name", "ParentCategoryID" },
-                values: new object[,]
-                {
+                    { 2, "Non-Fiction", null },
                     { 3, "Science Fiction", 1 },
                     { 4, "Biographies", 2 }
                 });
 
             migrationBuilder.InsertData(
-                table: "BookAuthors",
-                columns: new[] { "AuthorID", "BookID" },
-                values: new object[] { 2, 2 });
-
-            migrationBuilder.InsertData(
                 table: "Books",
-                columns: new[] { "BookID", "Description", "Edition", "Format", "Language", "Location", "MainCategoryID", "Pages", "Price", "PublishedDate", "Publisher", "SubCategoryID", "Title" },
-                values: new object[] { 1, "A science fiction novel.", "1st", "Hardcover", "English", "Shelf A1", 3, 255, 15.99m, new DateTime(1951, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Gnome Press", null, "Foundation" });
+                columns: new[] { "BookID", "CategoryID", "Description", "Edition", "Format", "Language", "Location", "MainCategoryID", "Pages", "Price", "PublishedDate", "Publisher", "SubCategoryID", "Title" },
+                values: new object[,]
+                {
+                    { 1, null, "A science fiction novel.", "1st", "Hardcover", "English", "Shelf A1", 1, 255, 15.99m, new DateTime(1951, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Gnome Press", 3, "Foundation" },
+                    { 2, null, "A mystery novel.", "1st", "Paperback", "English", "Shelf B2", 2, 256, 12.99m, new DateTime(1934, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Collins Crime Club", 4, "Murder on the Orient Express" }
+                });
 
             migrationBuilder.InsertData(
                 table: "BookAuthors",
                 columns: new[] { "AuthorID", "BookID" },
-                values: new object[] { 1, 1 });
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 2 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookAuthors_AuthorID",
                 table: "BookAuthors",
                 column: "AuthorID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Books_CategoryID",
+                table: "Books",
+                column: "CategoryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Books_MainCategoryID",

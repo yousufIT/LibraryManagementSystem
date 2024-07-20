@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Dropdown Example";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Dropdown Example</h2>
+
+    <div class="form-group">
+        <label for="mainCategories">Main Categories:</label>
+        <select id="mainCategories" class="form-control" onchange="loadSubCategories()">
+            <option value="">Select a main category</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="subCategories">Sub Categories:</label>
+        <select id="subCategories" class="form-control">
+            <option value="">Select a sub category</option>
+        </select>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/Dropdown/GetMainCategories')
+            .then(response => response.json())
+            .then(data => {
+                var mainCategoriesSelect = document.getElementById('mainCategories');
+                data.forEach(category => {
+                    var option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    mainCategoriesSelect.appendChild(option);
+                });
+            });
+    });
+
+    function loadSubCategories() {
+        var mainCategoryId = document.getElementById('mainCategories').value;
+        if (mainCategoryId) {
+            fetch(`/Dropdown/GetSubCategories?mainCategoryId=${mainCategoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    var subCategoriesSelect = document.getElementById('subCategories');
+                    subCategoriesSelect.innerHTML = '<option value="">Select a sub category</option>';
+                    data.forEach(category => {
+                        var option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        subCategoriesSelect.appendChild(option);
+                    });
+                });
+        } else {
+            document.getElementById('subCategories').innerHTML = '<option value="">Select a sub category</option>';
+        }
+    }
+</script>

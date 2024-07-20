@@ -5,9 +5,10 @@ using Library.infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LibraryTest.Summaries;
+using LibraryMVC.Summaries;
+using LibraryMVC.Models;
 
-namespace LibraryTest.Controllers
+namespace LibraryMVC.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -54,13 +55,27 @@ namespace LibraryTest.Controllers
         }
 
         // POST api/categories
-        [HttpPost]
-        public async Task<ActionResult<CategorySummary>> CreateCategory([FromBody] CategorySummary categorySummary)
+        [HttpPost("{ParentId}")]
+        public async Task<ActionResult<CategorySummary>> CreateCategory(int? ParentId,[FromBody] CategorySummary categorySummary)
         {
-            if (categorySummary == null) { return BadRequest(); }
+            if (categorySummary == null) { return NotFound("this cahegory not found"); }
             var category = _mapper.Map<Category>(categorySummary);
-            await _categoryRepository.AddAsync(category);
-            categorySummary.CategoryID = category.CategoryID;
+            if (ParentId != null)
+            { 
+                var parent = await _categoryRepository.GetByIdAsync(ParentId.Value);
+                if (parent == null) { return NotFound("this maincategory dosn't exist"); }
+                category.ParentCategory = parent;
+                category.ParentCategoryID = ParentId;
+
+                await _categoryRepository.AddAsync(category);
+                parent.SubCategories.Add(category);
+                await _categoryRepository.UpdateAsync(parent);
+            }
+            else
+            {
+                await _categoryRepository.AddAsync(category);
+            }
+                categorySummary.CategoryID = category.CategoryID;
             return Ok(categorySummary);
         }
 
@@ -98,5 +113,7 @@ namespace LibraryTest.Controllers
             await _categoryRepository.DeleteAsync(id);
             return Ok(_mapper.Map<CategorySummary>(category));
         }
+
+     
     }
 }

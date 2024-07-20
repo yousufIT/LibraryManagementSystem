@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20240719205725_library")]
-    partial class library
+    [Migration("20240720145737_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,6 +85,9 @@ namespace Library.infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookID"));
 
+                    b.Property<int?>("CategoryID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -130,6 +133,8 @@ namespace Library.infrastructure.Migrations
 
                     b.HasKey("BookID");
 
+                    b.HasIndex("CategoryID");
+
                     b.HasIndex("MainCategoryID");
 
                     b.HasIndex("SubCategoryID");
@@ -145,11 +150,12 @@ namespace Library.infrastructure.Migrations
                             Format = "Hardcover",
                             Language = "English",
                             Location = "Shelf A1",
-                            MainCategoryID = 3,
+                            MainCategoryID = 1,
                             Pages = 255,
                             Price = 15.99m,
                             PublishedDate = new DateTime(1951, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "Gnome Press",
+                            SubCategoryID = 3,
                             Title = "Foundation"
                         },
                         new
@@ -160,11 +166,12 @@ namespace Library.infrastructure.Migrations
                             Format = "Paperback",
                             Language = "English",
                             Location = "Shelf B2",
-                            MainCategoryID = 1,
+                            MainCategoryID = 2,
                             Pages = 256,
                             Price = 12.99m,
                             PublishedDate = new DateTime(1934, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "Collins Crime Club",
+                            SubCategoryID = 4,
                             Title = "Murder on the Orient Express"
                         });
                 });
@@ -244,14 +251,19 @@ namespace Library.infrastructure.Migrations
 
             modelBuilder.Entity("Library.Domain.Models.Book", b =>
                 {
+                    b.HasOne("Library.Domain.Models.Category", null)
+                        .WithMany("Books")
+                        .HasForeignKey("CategoryID");
+
                     b.HasOne("Library.Domain.Models.Category", "MainCategory")
                         .WithMany()
                         .HasForeignKey("MainCategoryID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Library.Domain.Models.Category", "SubCategory")
-                        .WithMany("Books")
-                        .HasForeignKey("SubCategoryID");
+                        .WithMany()
+                        .HasForeignKey("SubCategoryID")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("MainCategory");
 

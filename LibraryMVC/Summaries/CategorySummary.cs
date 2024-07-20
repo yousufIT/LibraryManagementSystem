@@ -1,4 +1,4 @@
-﻿namespace LibraryTest.Summaries
+﻿namespace LibraryMVC.Summaries
 {
     public class CategorySummary
     {
