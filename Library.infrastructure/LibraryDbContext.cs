@@ -10,20 +10,10 @@ namespace Library.infrastructure
         public LibraryDbContext(DbContextOptions<LibraryDbContext> options) : base(options)
         {
         }
-
-        protected LibraryDbContext()
-        {
-        }
-
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<BookAuthor> BookAuthors { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Data source=(localdb)\\MSSQLLocalDB ; Initial Catalog=LibraryTest");
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure many-to-many relationship between Book and Author
