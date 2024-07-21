@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LibraryMVC.Summaries;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryMVC.Controllers
 {
@@ -48,7 +49,8 @@ namespace LibraryMVC.Controllers
 
         // POST api/authors
         [HttpPost]
-        public async Task<ActionResult<AuthorSummary>> Creat([FromBody] AuthorSummary authorSummary)
+        [Authorize]
+        public async Task<ActionResult<AuthorSummary>> Create([FromBody] AuthorSummary authorSummary)
         {
             if (authorSummary == null) { return NotFound("this author not found"); }
             var author = _mapper.Map<Author>(authorSummary);
@@ -70,6 +72,7 @@ namespace LibraryMVC.Controllers
 
         // PUT api/authors/5
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] AuthorSummary authorSummary)
         {
             if (authorSummary == null) { return BadRequest(); }
@@ -87,6 +90,7 @@ namespace LibraryMVC.Controllers
 
         // DELETE api/authors/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var author = await _authorRepository.GetByIdAsync(id);

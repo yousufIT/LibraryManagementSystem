@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace Amazon.Controllers
+namespace LibraryMVC.Controllers
 {
     public class HomeController : Controller
     {

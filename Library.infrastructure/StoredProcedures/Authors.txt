@@ -2,7 +2,8 @@
 CREATE PROCEDURE GetAllAuthors
 AS
 BEGIN
-    SELECT * FROM Authors
+    SET NOCOUNT ON;
+    SELECT * FROM Authors;
 END
 GO
 
@@ -11,7 +12,8 @@ CREATE PROCEDURE GetAuthorById
     @ID INT
 AS
 BEGIN
-    SELECT * FROM Authors WHERE AuthorID = @ID
+    SET NOCOUNT ON;
+    SELECT * FROM Authors WHERE AuthorID = @ID;
 END
 GO
 
@@ -19,11 +21,19 @@ GO
 CREATE PROCEDURE CreateAuthor
     @Name NVARCHAR(100),
     @Nationality NVARCHAR(50),
-    @DateOfBirth DATE
+    @DateOfBirth DATE,
+    @AuthorID INT OUTPUT
 AS
 BEGIN
-    INSERT INTO Authors (Name, Nationality, DateOfBirth) VALUES (@Name, @Nationality, @DateOfBirth)
-    SELECT * FROM Authors WHERE AuthorID = SCOPE_IDENTITY()
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    INSERT INTO Authors (Name, Nationality, DateOfBirth) 
+    VALUES (@Name, @Nationality, @DateOfBirth);
+    
+    SET @AuthorID = SCOPE_IDENTITY();
+    
+    SELECT * FROM Authors WHERE AuthorID = @AuthorID;
+    COMMIT TRANSACTION;
 END
 GO
 
@@ -35,9 +45,12 @@ CREATE PROCEDURE UpdateAuthor
     @DateOfBirth DATE
 AS
 BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
     UPDATE Authors
     SET Name = @Name, Nationality = @Nationality, DateOfBirth = @DateOfBirth
-    WHERE AuthorID = @ID
+    WHERE AuthorID = @ID;
+    COMMIT TRANSACTION;
 END
 GO
 
@@ -46,7 +59,10 @@ CREATE PROCEDURE DeleteAuthor
     @ID INT
 AS
 BEGIN
-    DELETE FROM Authors WHERE AuthorID = @ID
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    DELETE FROM Authors WHERE AuthorID = @ID;
+    COMMIT TRANSACTION;
 END
 GO
 
@@ -55,10 +71,11 @@ CREATE PROCEDURE GetAuthorsByBook
     @BookID INT
 AS
 BEGIN
+    SET NOCOUNT ON;
     SELECT a.*
     FROM Authors a
     INNER JOIN BookAuthors ba ON a.AuthorID = ba.AuthorID
-    WHERE ba.BookID = @BookID
+    WHERE ba.BookID = @BookID;
 END
 GO
 
@@ -67,6 +84,7 @@ CREATE PROCEDURE GetAuthorsByNationality
     @Nationality NVARCHAR(50)
 AS
 BEGIN
-    SELECT * FROM Authors WHERE Nationality = @Nationality
+    SET NOCOUNT ON;
+    SELECT * FROM Authors WHERE Nationality = @Nationality;
 END
 GO

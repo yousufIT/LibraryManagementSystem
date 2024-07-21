@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LibraryMVC.Summaries;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryMVC.Controllers
 {
@@ -52,7 +53,8 @@ namespace LibraryMVC.Controllers
 
         // POST api/books
         [HttpPost]
-        public async Task<ActionResult<BookSummary>> Creat([FromBody] BookSummary bookSummary)
+        [Authorize]
+        public async Task<ActionResult<BookSummary>> Create([FromBody] BookSummary bookSummary)
         {
 
             if (bookSummary == null)
@@ -90,6 +92,7 @@ namespace LibraryMVC.Controllers
 
         // PUT api/books/5
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] BookSummary bookSummary)
         {
             if (bookSummary == null)
@@ -110,6 +113,7 @@ namespace LibraryMVC.Controllers
 
         // DELETE api/books/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<BookSummary>> Delete(int id)
         {
             var book = await _bookRepository.GetByIdAsync(id);

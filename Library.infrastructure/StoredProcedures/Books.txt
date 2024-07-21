@@ -2,7 +2,8 @@
 CREATE PROCEDURE GetAllBooks
 AS
 BEGIN
-    SELECT * FROM Books
+    SET NOCOUNT ON;
+    SELECT * FROM Books;
 END
 GO
 
@@ -11,7 +12,8 @@ CREATE PROCEDURE GetBookById
     @ID INT
 AS
 BEGIN
-    SELECT * FROM Books WHERE BookID = @ID
+    SET NOCOUNT ON;
+    SELECT * FROM Books WHERE BookID = @ID;
 END
 GO
 
@@ -28,12 +30,20 @@ CREATE PROCEDURE CreateBook
     @Price DECIMAL(18, 2),
     @Edition NVARCHAR(50),
     @Format NVARCHAR(50),
-    @Location NVARCHAR(100)
+    @Location NVARCHAR(100),
+    @BookID INT OUTPUT
 AS
 BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    
     INSERT INTO Books (Title, PublishedDate, Description, MainCategoryID, SubCategoryID, Publisher, Pages, Language, Price, Edition, Format, Location)
-    VALUES (@Title, @PublishedDate, @Description, @MainCategoryID, @SubCategoryID, @Publisher, @Pages, @Language, @Price, @Edition, @Format, @Location)
-    SELECT * FROM Books WHERE BookID = SCOPE_IDENTITY()
+    VALUES (@Title, @PublishedDate, @Description, @MainCategoryID, @SubCategoryID, @Publisher, @Pages, @Language, @Price, @Edition, @Format, @Location);
+    
+    SET @BookID = SCOPE_IDENTITY();
+    
+    SELECT * FROM Books WHERE BookID = @BookID;
+    COMMIT TRANSACTION;
 END
 GO
 
@@ -54,6 +64,9 @@ CREATE PROCEDURE UpdateBook
     @Location NVARCHAR(100)
 AS
 BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    
     UPDATE Books
     SET Title = @Title,
         PublishedDate = @PublishedDate,
@@ -67,7 +80,9 @@ BEGIN
         Edition = @Edition,
         Format = @Format,
         Location = @Location
-    WHERE BookID = @ID
+    WHERE BookID = @ID;
+    
+    COMMIT TRANSACTION;
 END
 GO
 
@@ -76,25 +91,32 @@ CREATE PROCEDURE DeleteBook
     @ID INT
 AS
 BEGIN
-    DELETE FROM Books WHERE BookID = @ID
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    
+    DELETE FROM Books WHERE BookID = @ID;
+    
+    COMMIT TRANSACTION;
 END
 GO
 
--- الإجراء المخزن للحصول على الكتب استنادًا إلى الفئة الرئيسية
+-- الإجراء المخزن للحصول على الكتب بناءً على الفئة الرئيسية
 CREATE PROCEDURE GetBooksByMainCategory
     @MainCategoryID INT
 AS
 BEGIN
-    SELECT * FROM Books WHERE MainCategoryID = @MainCategoryID
+    SET NOCOUNT ON;
+    SELECT * FROM Books WHERE MainCategoryID = @MainCategoryID;
 END
 GO
 
--- الإجراء المخزن للحصول على الكتب استنادًا إلى الفئة الفرعية
+-- الإجراء المخزن للحصول على الكتب بناءً على الفئة الفرعية
 CREATE PROCEDURE GetBooksBySubCategory
     @SubCategoryID INT
 AS
 BEGIN
-    SELECT * FROM Books WHERE SubCategoryID = @SubCategoryID
+    SET NOCOUNT ON;
+    SELECT * FROM Books WHERE SubCategoryID = @SubCategoryID;
 END
 GO
 
@@ -103,9 +125,10 @@ CREATE PROCEDURE GetBooksByAuthor
     @AuthorID INT
 AS
 BEGIN
+    SET NOCOUNT ON;
     SELECT b.* 
     FROM Books b
     INNER JOIN BookAuthors ba ON b.BookID = ba.BookID
-    WHERE ba.AuthorID = @AuthorID
+    WHERE ba.AuthorID = @AuthorID;
 END
 GO

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LibraryMVC.Summaries;
 using LibraryMVC.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryMVC.Controllers
 {
@@ -56,6 +57,7 @@ namespace LibraryMVC.Controllers
 
         // POST api/categories
         [HttpPost("{ParentId}")]
+        [Authorize]
         public async Task<ActionResult<CategorySummary>> Create(int? ParentId,[FromBody] CategorySummary categorySummary)
         {
             if (categorySummary == null) { return NotFound("this cahegory not found"); }
@@ -81,6 +83,7 @@ namespace LibraryMVC.Controllers
 
         // PUT api/categories/{id}
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] CategorySummary categorySummary)
         {
             if (categorySummary == null)
@@ -102,6 +105,7 @@ namespace LibraryMVC.Controllers
 
         // DELETE api/categories/{id}
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<CategorySummary>> DeleteCategory(int id)
         {
             var category = await _categoryRepository.GetByIdAsync(id);

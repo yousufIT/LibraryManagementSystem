@@ -8,8 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
-namespace LibraryTest
+namespace LibraryMVC
 {
     public class Program
     {
@@ -21,17 +23,27 @@ namespace LibraryTest
             builder.Services.AddDbContext<LibraryDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+            builder.Services.AddAuthentication().AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new()
+                {
+                    ValidIssuer = builder.Configuration["Authentivation:Issuer"],
+                    ValidAudience = builder.Configuration["Authentivation:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
+                                         builder.Configuration["Authentivation:SecretKey"])),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true
+                };
+            });
             //  ”ÃÌ· «·„” Êœ⁄« 
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-            // ≈÷«›… Œœ„«  MVC
-            builder.Services.AddControllersWithViews(); // Œœ„… MVC
+            builder.Services.AddControllersWithViews(); 
 
             var app = builder.Build();
 
-            //  ﬂÊÌ‰ «·√‰«»Ì»
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -42,7 +54,7 @@ namespace LibraryTest
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

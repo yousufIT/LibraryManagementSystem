@@ -2,7 +2,8 @@
 CREATE PROCEDURE GetMainCategories
 AS
 BEGIN
-    SELECT * FROM Categories WHERE ParentCategoryID IS NULL
+    SET NOCOUNT ON;
+    SELECT * FROM Categories WHERE ParentCategoryID IS NULL;
 END
 GO
 
@@ -11,7 +12,8 @@ CREATE PROCEDURE GetSubCategories
     @MainCategoryID INT
 AS
 BEGIN
-    SELECT * FROM Categories WHERE ParentCategoryID = @MainCategoryID
+    SET NOCOUNT ON;
+    SELECT * FROM Categories WHERE ParentCategoryID = @MainCategoryID;
 END
 GO
 
@@ -20,18 +22,28 @@ CREATE PROCEDURE GetCategoryById
     @ID INT
 AS
 BEGIN
-    SELECT * FROM Categories WHERE CategoryID = @ID
+    SET NOCOUNT ON;
+    SELECT * FROM Categories WHERE CategoryID = @ID;
 END
 GO
 
 -- الإجراء المخزن لإنشاء فئة جديدة
 CREATE PROCEDURE CreateCategory
     @Name NVARCHAR(100),
-    @ParentCategoryID INT = NULL
+    @ParentCategoryID INT = NULL,
+    @CategoryID INT OUTPUT
 AS
 BEGIN
-    INSERT INTO Categories (Name, ParentCategoryID) VALUES (@Name, @ParentCategoryID)
-    SELECT * FROM Categories WHERE CategoryID = SCOPE_IDENTITY()
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    
+    INSERT INTO Categories (Name, ParentCategoryID) 
+    VALUES (@Name, @ParentCategoryID);
+    
+    SET @CategoryID = SCOPE_IDENTITY();
+    
+    SELECT * FROM Categories WHERE CategoryID = @CategoryID;
+    COMMIT TRANSACTION;
 END
 GO
 
@@ -42,7 +54,15 @@ CREATE PROCEDURE UpdateCategory
     @ParentCategoryID INT = NULL
 AS
 BEGIN
-    UPDATE Categories SET Name = @Name, ParentCategoryID = @ParentCategoryID WHERE CategoryID = @ID
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    
+    UPDATE Categories 
+    SET Name = @Name, 
+        ParentCategoryID = @ParentCategoryID 
+    WHERE CategoryID = @ID;
+    
+    COMMIT TRANSACTION;
 END
 GO
 
@@ -51,6 +71,11 @@ CREATE PROCEDURE DeleteCategory
     @ID INT
 AS
 BEGIN
-    DELETE FROM Categories WHERE CategoryID = @ID
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    
+    DELETE FROM Categories WHERE CategoryID = @ID;
+    
+    COMMIT TRANSACTION;
 END
 GO
