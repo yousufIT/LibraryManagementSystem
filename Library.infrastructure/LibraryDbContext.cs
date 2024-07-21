@@ -28,7 +28,6 @@ namespace Library.infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure many-to-many relationship between Book and Author
             modelBuilder.Entity<BookAuthor>()
                 .HasKey(ba => new { ba.BookID, ba.AuthorID });
 
@@ -42,21 +41,21 @@ namespace Library.infrastructure
                 .WithMany(a => a.BookAuthors)
                 .HasForeignKey(ba => ba.AuthorID);
 
-            // Configure relationship between Book and MainCategory
+          
             modelBuilder.Entity<Book>()
                 .HasOne(b => b.MainCategory)
                 .WithMany()
                 .HasForeignKey(b => b.MainCategoryID)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Configure relationship between Book and SubCategory
+           
             modelBuilder.Entity<Book>()
                 .HasOne(b => b.SubCategory)
                 .WithMany()
                 .HasForeignKey(b => b.SubCategoryID)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Configure relationship between Category and its SubCategories
+           
             modelBuilder.Entity<Category>()
                 .HasMany(c => c.SubCategories)
                 .WithOne(c => c.ParentCategory)

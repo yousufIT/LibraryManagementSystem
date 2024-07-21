@@ -1,0 +1,171 @@
+﻿@using Library.Domain.Models
+
+@{
+    ViewData["Title"] = "Categories";
+    var mainCategories = ViewBag.MainCategories as IEnumerable<Category>;
+}
+
+
+<div class="container mt-5" style="min-width:80%;display:grid;grid-template-columns:repeat(3,1fr);gap:30px;min-height:400px">
+    <h2 class="mb-4" style="top:-400px">Categories</h2>
+
+    <div class="form-group">
+        <label for="mainCategories">Main Categories:</label>
+        <select id="mainCategories" class="form-control">
+            <option value="">Select a Main Category</option>
+            @foreach (var category in mainCategories)
+            {
+                <option value="@category.CategoryID">@category.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="subCategories">Sub Categories:</label>
+        <select id="subCategories" class="form-control">
+            <option value="">Select a Sub Category</option>
+        </select>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mainCategoriesSelect = document.getElementById('mainCategories');
+        const subCategoriesSelect = document.getElementById('subCategories');
+
+        mainCategoriesSelect.addEventListener('change', function () {
+            const mainCategoryId = this.value;
+            if (mainCategoryId) {
+                fetch(`/MoreServices/GetSubCategories?mainCategoryId=${mainCategoryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        subCategoriesSelect.innerHTML = '<option value="">Select a Sub Category</option>';
+                        data.forEach(category => {
+                            const option = document.createElement('option');
+                            option.value = category.categoryID;
+                            option.text = category.name;
+                            console.log(category)
+                            console.log(category.name)
+                            subCategoriesSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching subcategories:', error));
+            } else {
+                subCategoriesSelect.innerHTML = '<option value="">Select a Sub Category</option>';
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Ctegory</h2>
+
+    <div class="form-group">
+        <label for="mainCategories">Main Categories:</label>
+        <select id="mainCategories" class="form-control" onchange="loadSubCategories()">
+            <option value="">Select a main category</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="subCategories">Sub Categories:</label>
+        <select id="subCategories" class="form-control">
+            <option value="">Select a sub category</option>
+        </select>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/Dropdown/GetMainCategories')
+            .then(response => response.json())
+            .then(data => {
+                var mainCategoriesSelect = document.getElementById('mainCategories');
+                data.forEach(category => {
+                    var option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    mainCategoriesSelect.appendChild(option);
+                });
+            });
+    });
+
+    function loadSubCategories() {
+        var mainCategoryId = document.getElementById('mainCategories').value;
+        if (mainCategoryId) {
+            fetch(`/Dropdown/GetSubCategories?mainCategoryId=${mainCategoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    var subCategoriesSelect = document.getElementById('subCategories');
+                    subCategoriesSelect.innerHTML = '<option value="">Select a sub category</option>';
+                    data.forEach(category => {
+                        var option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        subCategoriesSelect.appendChild(option);
+                    });
+                });
+        } else {
+            document.getElementById('subCategories').innerHTML = '<option value="">Select a sub category</option>';
+        }
+    }
+</script>
+ *@

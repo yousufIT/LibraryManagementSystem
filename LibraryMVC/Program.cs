@@ -26,7 +26,6 @@ namespace LibraryTest
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-
             // ≈÷«›… Œœ„«  MVC
             builder.Services.AddControllersWithViews(); // Œœ„… MVC
 

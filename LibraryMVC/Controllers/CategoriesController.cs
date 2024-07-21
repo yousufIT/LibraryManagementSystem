@@ -56,7 +56,7 @@ namespace LibraryMVC.Controllers
 
         // POST api/categories
         [HttpPost("{ParentId}")]
-        public async Task<ActionResult<CategorySummary>> CreateCategory(int? ParentId,[FromBody] CategorySummary categorySummary)
+        public async Task<ActionResult<CategorySummary>> Create(int? ParentId,[FromBody] CategorySummary categorySummary)
         {
             if (categorySummary == null) { return NotFound("this cahegory not found"); }
             var category = _mapper.Map<Category>(categorySummary);

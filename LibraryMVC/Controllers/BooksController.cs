@@ -59,14 +59,18 @@ namespace LibraryMVC.Controllers
             {
                 return NotFound("this book not found.");
             }
-
-            // Map BookSummary to Book
             var book = _mapper.Map<Book>(bookSummary);
-            book.MainCategory = await _categoryRepository.GetByIdAsync(bookSummary.MainCategoryID);
             book.SubCategory = await _categoryRepository.GetByIdAsync(bookSummary.SubCategoryID);
+            if (book.SubCategory.ParentCategoryID != bookSummary.MainCategoryID)
+            {
+                return BadRequest("this subCategory doesn't belong mainCategory");
+            }
+                book.MainCategory = await _categoryRepository.GetByIdAsync(bookSummary.MainCategoryID);
             var author=await _authorRepository.GetByIdAsync(bookSummary.AuthorId.Value);
-            if(author == null) { return NotFound("this author doesn't exist"); }
-            // Add the book to the repository
+            if(author == null) 
+            {
+                return NotFound("this author doesn't exist");
+            }
             await _bookRepository.AddAsync(book);
             BookAuthor bookAuthor = new BookAuthor()
             {
@@ -79,7 +83,6 @@ namespace LibraryMVC.Controllers
             book.SubCategory.Books.Add(book);
             book.BookAuthors.Add(bookAuthor);
             await _bookRepository.UpdateAsync(book);
-            // Map the book back to BookSummary for response
             bookSummary.BookID = book.BookID;
 
             return Ok(bookSummary);
@@ -100,7 +103,6 @@ namespace LibraryMVC.Controllers
                 return NotFound();
             }
             bookSummary.BookID = book.BookID;
-            // Map from BookSummary to Book
             _mapper.Map(bookSummary, book);
             await _bookRepository.UpdateAsync(book);
             return NoContent();

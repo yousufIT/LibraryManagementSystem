@@ -2,9 +2,9 @@
 {
     public class Category
     {
-        public int CategoryID { get; set; }     // Unique identifier for each category (Primary Key)
-        public string Name { get; set; }        // Name of the category
-        public int? ParentCategoryID { get; set; } // معرف الفئة الرئيسية إذا كانت هذه فئة فرعية
+        public int CategoryID { get; set; }    
+        public string Name { get; set; }        
+        public int? ParentCategoryID { get; set; }
 
         // التنقل بين العلاقات
         public Category ParentCategory { get; set; }

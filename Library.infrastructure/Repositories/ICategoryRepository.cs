@@ -6,6 +6,5 @@ namespace Library.infrastructure.Repositories
     {
         Task<IEnumerable<Category>> GetSubCategoriesAsync(int mainCategoryId);
         Task<IEnumerable<Category>> GetMainCategoriesAsync();
-        //Task<IEnumerable<Category>> GetCategoriesWithBooksAsync();
     }
 }

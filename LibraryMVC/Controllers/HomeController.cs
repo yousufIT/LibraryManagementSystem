@@ -1,8 +1,8 @@
-using LibraryMVC.Models;
+﻿using LibraryMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace LibraryMVC.Controllers
+namespace Amazon.Controllers
 {
     public class HomeController : Controller
     {
