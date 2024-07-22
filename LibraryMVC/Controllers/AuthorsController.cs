@@ -64,7 +64,6 @@ namespace LibraryMVC.Controllers
                 AuthorID = author.AuthorID,
                 Author = author
             };
-            author.BookAuthors.Add(bookAuthor);
             await _authorRepository.UpdateAsync(author);
             authorSummary.AuthorID = author.AuthorID;
             return Ok(authorSummary);

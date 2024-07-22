@@ -83,7 +83,6 @@ namespace LibraryMVC.Controllers
             };
             book.MainCategory.Books.Add(book);
             book.SubCategory.Books.Add(book);
-            book.BookAuthors.Add(bookAuthor);
             await _bookRepository.UpdateAsync(book);
             bookSummary.BookID = book.BookID;
 
